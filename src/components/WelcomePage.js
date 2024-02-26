@@ -1,12 +1,23 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { Button, Container, TextField, Typography, Box, Grid, CssBaseline, Avatar } from '@mui/material';
+import { Link, useNavigate } from 'react-router-dom';
+import {
+  Button,
+  Container,
+  TextField,
+  Typography,
+  Box,
+  Grid,
+  CssBaseline,
+  Avatar,
+} from '@mui/material';
 import FitnessCenterOutlinedIcon from '@mui/icons-material/FitnessCenterOutlined';
 
 const WelcomePage = () => {
+  const navigate = useNavigate();
   const [loggedIn, setLoggedIn] = useState(false);
   const [name, setName] = useState('');
   const [inputName, setInputName] = useState('');
+  const [userData, setUserData] = useState(null); // State to store user data
 
   const handleInputChange = (event) => {
     setInputName(event.target.value);
@@ -25,8 +36,11 @@ const WelcomePage = () => {
 
         const data = await response.json();
         if (response.ok && data.user) {
+          console.log(data.user);
           setName(inputName);
+          setUserData(data.user); // Set user data
           setLoggedIn(true);
+          navigate('/dashboard', { state: { userData: data.user} }); // Navigate to dashboard with userData
         } else {
           alert('User not found');
         }
@@ -47,7 +61,6 @@ const WelcomePage = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // alert(`Welcome, ${name}!`);
   };
 
   return (
