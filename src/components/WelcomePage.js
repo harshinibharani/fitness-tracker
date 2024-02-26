@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 
 const WelcomePage = () => {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -36,33 +37,6 @@ const WelcomePage = () => {
     }
   };
 
-  const handleRegister = async () => {
-    if (inputName.trim() !== '') {
-      try {
-        const response = await fetch('http://localhost:4000/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ name: inputName }),
-        });
-
-        const data = await response.json();
-        if (response.ok) {
-          setName(inputName);
-          setLoggedIn(true);
-        } else {
-          alert(data.message);
-        }
-      } catch (error) {
-        console.error('Error during registration:', error);
-        alert('Registration failed. Please check the console for more details.');
-      }
-    } else {
-      alert('Please enter your name to register.');
-    }
-  };
-
   const handleLogout = () => {
     setName('');
     setInputName('');
@@ -71,7 +45,7 @@ const WelcomePage = () => {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    alert(`Welcome, ${name}!`);
+    // alert(`Welcome, ${name}!`);
   };
 
   return (
@@ -83,7 +57,7 @@ const WelcomePage = () => {
         </div>
       ) : (
         <div>
-          <h1>Welcome to Our Fitness Tracker App</h1>
+          <h1>Fitness Tracker</h1>
           <form onSubmit={handleSubmit}>
             <label>
               Please enter your name:
@@ -97,10 +71,10 @@ const WelcomePage = () => {
             <button type="submit" onClick={handleLogin}>
               Login
             </button>
-            <button type="button" onClick={handleRegister}>
-              Register
-            </button>
           </form>
+          <div>
+            <Link to="/register">New User? Register</Link>
+          </div>
         </div>
       )}
     </div>
