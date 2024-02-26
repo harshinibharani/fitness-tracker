@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { Button, Container, TextField, Typography, Box, Grid, CssBaseline, Avatar } from '@mui/material';
+import FitnessCenterOutlinedIcon from '@mui/icons-material/FitnessCenterOutlined';
 
 const WelcomePage = () => {
   const [loggedIn, setLoggedIn] = useState(false);
@@ -49,35 +51,68 @@ const WelcomePage = () => {
   };
 
   return (
-    <div>
-      {loggedIn ? (
-        <div>
-          <h1>Welcome back, {name}!</h1>
-          <button onClick={handleLogout}>Logout</button>
-        </div>
-      ) : (
-        <div>
-          <h1>Fitness Tracker</h1>
-          <form onSubmit={handleSubmit}>
-            <label>
-              Please enter your name:
-              <input
-                type="text"
+    <Container component="main" maxWidth="xs">
+      <CssBaseline />
+      <Box
+        sx={{
+          marginTop: 8,
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+        }}
+      >
+        <Avatar sx={{ m: 1, bgcolor: 'secondary.main' }}>
+          <FitnessCenterOutlinedIcon />
+        </Avatar>
+        <Typography component="h1" variant="h5">
+          {loggedIn ? `Welcome back, ${name}!` : 'Fitness Tracker'}
+        </Typography>
+        <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
+          {!loggedIn && (
+            <>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="name"
+                label="Name"
+                name="name"
+                autoComplete="name"
+                autoFocus
                 value={inputName}
                 onChange={handleInputChange}
               />
-            </label>
-            <br />
-            <button type="submit" onClick={handleLogin}>
-              Login
-            </button>
-          </form>
-          <div>
-            <Link to="/register">New User? Register</Link>
-          </div>
-        </div>
-      )}
-    </div>
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+                onClick={handleLogin}
+              >
+                Login
+              </Button>
+              <Grid container justifyContent="center">
+                <Grid item>
+                  <Link to="/register" variant="body2">
+                    New User? Register
+                  </Link>
+                </Grid>
+              </Grid>
+            </>
+          )}
+          {loggedIn && (
+            <Button
+              fullWidth
+              variant="contained"
+              sx={{ mt: 3, mb: 2 }}
+              onClick={handleLogout}
+            >
+              Logout
+            </Button>
+          )}
+        </Box>
+      </Box>
+    </Container>
   );
 };
 
