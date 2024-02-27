@@ -1,5 +1,5 @@
 import React from 'react';
-import { useLocation, Link as RouterLink } from 'react-router-dom';
+import { useLocation, Link as RouterLink, useNavigate } from 'react-router-dom';
 import {
   AppBar,
   Toolbar,
@@ -14,6 +14,11 @@ import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 const Dashboard = () => {
   const location = useLocation();
   const userData = location.state?.userData;
+  const navigate = useNavigate(); // Hook for navigation
+
+  const handleLogWorkout = () => {
+    navigate('/logworkout', { state: { userData } }); // Navigate with userData
+  };
 
   return (
     <div>
@@ -41,8 +46,7 @@ const Dashboard = () => {
           </Button>
           <Button
             color="inherit"
-            component={RouterLink}
-            to="/logworkout"
+            onClick={handleLogWorkout} // Call handleLogWorkout to navigate
             sx={{ textDecoration: 'none' }}
           >
             Log Workout
