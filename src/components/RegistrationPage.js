@@ -32,6 +32,7 @@ const RegistrationPage = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
+      console.log('Submitting:', { name, age, weight, height });
       const response = await fetch('http://localhost:4000/register', {
         method: 'POST',
         headers: {
@@ -43,8 +44,11 @@ const RegistrationPage = () => {
       const data = await response.json();
       if (response.ok) {
         alert(data.message);
+        console.log('Registration response:', data);
+
         navigate('/'); // Navigate to login page on successful registration
       } else {
+        console.log('Registration response:', data);
         alert('Registration failed');
       }
     } catch (error) {

@@ -50,12 +50,15 @@ app.post('/login', async (req, res) => {
     return res.status(500).json({ message: 'Server Error' });
   }
 });
-
 // Register route
 app.post('/register', async (req, res) => {
   const { name, age, weight, height } = req.body;
   if (!name || !age || !weight || !height) {
     return res.status(400).json({ message: 'Name, age, weight, and height are required' });
+  }
+
+  if (isNaN(age) || isNaN(weight) || isNaN(height)) {
+    return res.status(400).json({ message: 'Age, weight, and height must be numbers' });
   }
 
   try {
@@ -72,10 +75,11 @@ app.post('/register', async (req, res) => {
 
     return res.json({ message: 'User registered successfully', newUser });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: 'Server Error' });
+    console.error('Error during registration:', error);
+    return res.status(500).json({ message: 'Server Error', error: error.message });
   }
 });
+
 
 // Add workout route
 app.post('/workouts/add', async (req, res) => {
@@ -98,6 +102,27 @@ app.post('/workouts/add', async (req, res) => {
     const result = await workoutsCollection.insertOne(newWorkout);
 
     return res.json({ message: 'Workout added successfully', newWorkout });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+// Get workouts for a specific user
+app.get('/workouts/:userId', async (req, res) => {
+  const userId = req.params.userId;
+  if (!userId) {
+    return res.status(400).json({ message: 'User ID is required' });
+  }
+
+  try {
+    const database = client.db('fitness-tracker');
+    const workoutsCollection = database.collection('Workouts');
+
+    // Find all workouts for the given userId
+    const workouts = await workoutsCollection.find({ userId: new ObjectId(userId) }).toArray();
+
+    return res.json({ workouts });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Server Error' });
