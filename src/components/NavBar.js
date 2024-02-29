@@ -1,9 +1,15 @@
 import React from 'react';
 import { AppBar, Toolbar, Typography, Button, IconButton } from '@mui/material';
 import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate} from 'react-router-dom';
 
 const NavBar = ({ userData }) => {
+    const navigate = useNavigate();
+  
+    const handleDashboardClick = () => {
+      navigate('/dashboard', { state: { userData } });
+    };
+
   return (
     <AppBar position="static">
       <Toolbar>
@@ -22,6 +28,7 @@ const NavBar = ({ userData }) => {
         <Button
           color="inherit"
           component={RouterLink}
+          onClick={handleDashboardClick}
           to="/dashboard"
           sx={{ textDecoration: 'none' }}
         >
@@ -38,10 +45,10 @@ const NavBar = ({ userData }) => {
         <Button
           color="inherit"
           component={RouterLink}
-          to="/trackmacros"
+          to="/exercise"
           sx={{ textDecoration: 'none' }}
         >
-          Track Macros
+          Explore Exercises
         </Button>
         <Button
           color="inherit"

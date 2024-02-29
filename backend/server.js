@@ -1,4 +1,6 @@
+require('dotenv').config(); // This will load your .env file
 const express = require('express');
+
 const { MongoClient, ObjectId } = require('mongodb');
 
 const app = express();
@@ -9,7 +11,8 @@ app.use(cors());
 app.use(express.json());
 
 // MongoDB connection string
-const uri = "mongodb+srv://hbharani:UnivMass22@cluster0.7ttzqaf.mongodb.net/fitness-tracker?retryWrites=true&w=majority&appName=Cluster0";
+// const { parse } = require('mongodb-connection-string-url');
+const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri);
 
 // Connect to MongoDB
@@ -108,6 +111,36 @@ app.post('/workouts/add', async (req, res) => {
   }
 });
 
+//add macros
+app.post('/macros/add', async (req, res) => {
+  const { userId, foodName, calories, protein, carbohydrates, fat, consumed_at } = req.body;
+  if (!userId || !foodName || !calories || !protein || !carbohydrates || !fat || !consumed_at) {
+    return res.status(400).json({ message: 'All fields are required' });
+  }
+
+  try {
+    const database = client.db('fitness-tracker');
+    const macrosCollection = database.collection('Macros');
+    console.log(foodName);
+    const newMacro = {
+      userId: new ObjectId(userId), // Convert userId to ObjectId
+      foodName,
+      calories,
+      protein,
+      carbohydrates,
+      fat,
+      consumed_at
+    };
+
+    const result = await macrosCollection.insertOne(newMacro);
+
+    return res.json({ message: 'Macro added successfully', newMacro });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Server Error' });
+  }
+});
+
 // Get workouts for a specific user
 app.get('/workouts/:userId', async (req, res) => {
   const userId = req.params.userId;
@@ -123,6 +156,27 @@ app.get('/workouts/:userId', async (req, res) => {
     const workouts = await workoutsCollection.find({ userId: new ObjectId(userId) }).toArray();
 
     return res.json({ workouts });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: 'Server Error' });
+  }
+});
+
+// Get macros for a specific user
+app.get('/macros/:userId', async (req, res) => {
+  const userId = req.params.userId;
+  if (!userId) {
+    return res.status(400).json({ message: 'User ID is required' });
+  }
+
+  try {
+    const database = client.db('fitness-tracker');
+    const macrosCollection = database.collection('Macros');
+
+    // Find all macros for the given userId
+    const macros = await macrosCollection.find({ userId: new ObjectId(userId) }).toArray();
+
+    return res.json({ macros });
   } catch (error) {
     console.error(error);
     return res.status(500).json({ message: 'Server Error' });
