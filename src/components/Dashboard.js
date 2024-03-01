@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { format } from 'date-fns';
+import { format } from 'date-fns'; // Import isToday function
 import {
   AppBar,
   Toolbar,
@@ -10,8 +10,6 @@ import {
   Box,
   Container,
   List,
-  ListItem,
-  ListItemText,
   Grid,
   Card,
   CardContent,
@@ -22,7 +20,7 @@ import DashboardOutlinedIcon from '@mui/icons-material/DashboardOutlined';
 const Dashboard = () => {
   const location = useLocation();
   const userData = location.state?.userData;
-  console.log('In dashboard', userData);
+  // console.log('In dashboard', userData);
   const navigate = useNavigate(); // Hook for navigation
   const [workouts, setWorkouts] = useState([]);
   const [macros, setMacros] = useState([]);
@@ -68,6 +66,69 @@ const Dashboard = () => {
   const handleProfile = () => {
     navigate('/profile', { state: { userData } }); // Pass userData to Profile
   };
+
+  // Calculate progress values for proteinGoal, calorieGoal, and activityGoal
+  const calculateProgress = () => {
+    let proteinProgress = 0;
+    let calorieProgress = 0;
+    let activityProgress = 0;
+
+    // Calculate proteinGoal and calorieGoal from macros
+    if (macros.length > 0) {
+      const today = new Date();
+      const formattedToday = format(today, 'yyyy-MM-dd');
+
+      // Filter macros for today's date
+      const todaysMacros = macros.filter(macro => {
+        const consumedDate = new Date(macro.consumed_at);
+        return format(consumedDate, 'yyyy-MM-dd') === formattedToday;
+      });
+
+      // Sum up protein and calories for today's macros
+      const totalProteinToday = todaysMacros.reduce((total, macro) => {
+        return total + macro.protein;
+      }, 0);
+
+      const totalCaloriesToday = todaysMacros.reduce((total, macro) => {
+        return total + macro.calories;
+      }, 0);
+
+      // Calculate proteinProgress and calorieProgress based on totals and goals
+      proteinProgress = Math.min((totalProteinToday / userData.proteinGoal) * 100, 100);
+      calorieProgress = Math.min((totalCaloriesToday / userData.calorieGoal) * 100, 100);
+
+
+
+      // console.log('Total Protein Today:', totalProteinToday);
+      // console.log('Total Calories Today:', totalCaloriesToday);
+    }
+
+
+    // Calculate activityGoal from workouts
+    if (workouts.length > 0) {
+      const today = new Date();
+      const formattedToday = format(today, 'yyyy-MM-dd');
+
+      const todaysWorkout = workouts.filter(workout => {
+        // console.log('workout date', workout.date === formattedToday);
+        return workout.date === formattedToday;
+      });
+
+      if (todaysWorkout) {
+        // Sum up caloriesBurned for today's workouts
+        const totalCaloriesBurnedToday = todaysWorkout.reduce((total, workout) => {
+          return total + workout.caloriesBurned;
+        }, 0);
+        
+        activityProgress = Math.min((totalCaloriesBurnedToday / userData.activityGoal) * 100, 100);
+        // console.log('todays cal',totalCaloriesBurnedToday );
+      }
+    }
+
+    return { proteinProgress, calorieProgress, activityProgress };
+  };
+
+  const { proteinProgress, calorieProgress, activityProgress } = calculateProgress();
 
   return (
     <div>
@@ -147,7 +208,7 @@ const Dashboard = () => {
                             Calories Burned: {workout.caloriesBurned}
                           </Typography>
                           <Typography variant="body2" color="text.secondary">
-                            Date: {format(new Date(workout.date), 'MM/dd/yyyy')}
+                            Date: {workout.date}
                           </Typography>
                         </CardContent>
                       </Card>
@@ -186,9 +247,121 @@ const Dashboard = () => {
             </Grid>
           </Grid>
         )}
+        {loading ? (
+          // Show loading button while fetching data
+          <Box display="flex" justifyContent="center" mt={4}>
+            <CircularProgress />
+          </Box>
+        ) : (
+          <Grid container spacing={4}>
+            <Grid item xs={12} md={4}>
+              <Box mt={4} textAlign="center">
+                <Typography variant="h5" gutterBottom>
+                  Protein Goal Progress
+                </Typography>
+                <Box position="relative" display="inline-flex">
+                  <CircularProgress
+                    variant="determinate"
+                    value={proteinProgress}
+                    size={120}
+                    thickness={5}
+                    sx={{
+                      color: proteinProgress >= 100 ? 'green' : 'red',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      zIndex: 1,
+                    }}
+                  />
+                  <Box
+                    top={55}
+                    left={55}
+                    bottom={0}
+                    right={0}
+                    position="absolute"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Typography>{`${proteinProgress.toFixed(2)}%`}</Typography>
+                  </Box>
+                </Box>
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Box mt={4} textAlign="center">
+                <Typography variant="h5" gutterBottom>
+                  Calorie Goal Progress
+                </Typography>
+                <Box position="relative" display="inline-flex">
+                  <CircularProgress
+                    variant="determinate"
+                    value={calorieProgress}
+                    size={120}
+                    thickness={5}
+                    sx={{
+                      color: calorieProgress >= 100 ? 'green' : 'red',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      zIndex: 1,
+                    }}
+                  />
+                  <Box
+                    top={55}
+                    left={55}
+                    bottom={0}
+                    right={0}
+                    position="absolute"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Typography>{`${calorieProgress.toFixed(2)}%`}</Typography>
+                  </Box>
+                </Box>
+              </Box>
+            </Grid>
+            <Grid item xs={12} md={4}>
+              <Box mt={4} textAlign="center">
+                <Typography variant="h5" gutterBottom>
+                  Activity Goal Progress
+                </Typography>
+                <Box position="relative" display="inline-flex">
+                  <CircularProgress
+                    variant="determinate"
+                    value={activityProgress}
+                    size={120}
+                    thickness={5}
+                    sx={{
+                      color: activityProgress >= 100 ? 'green' : 'red',
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      zIndex: 1,
+                    }}
+                  />
+                  <Box
+                    top={55}
+                    left={55}
+                    bottom={0}
+                    right={0}
+                    position="absolute"
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                  >
+                    <Typography>{`${activityProgress.toFixed(2)}%`}</Typography>
+                  </Box>
+                </Box>
+              </Box>
+            </Grid>
+          </Grid>
+        )}
       </Container>
     </div>
   );
 };
 
 export default Dashboard;
+

@@ -32,10 +32,19 @@ const Profile = () => {
                 <strong>Age:</strong> {userData?.age}
               </Typography>
               <Typography variant="body1" gutterBottom>
-                <strong>Weight:</strong> {userData?.weight} lbs
+                <strong>Weight:</strong> {userData?.weight} kgs
               </Typography>
               <Typography variant="body1" gutterBottom>
                 <strong>Height:</strong> {userData?.height} cm
+              </Typography>
+              <Typography variant="body1" gutterBottom>
+                <strong>Per day calorie goal:</strong> {userData?.calorieGoal} cal
+              </Typography>
+              <Typography variant="body1" gutterBottom>
+                <strong>Per day protein goal:</strong> {userData?.proteinGoal} g
+              </Typography>
+              <Typography variant="body1" gutterBottom>
+                <strong>Per day activity goal:</strong> {userData?.activityGoal} cal
               </Typography>
             </Box>
           </Paper>

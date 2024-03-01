@@ -12,6 +12,9 @@ const RegistrationPage = () => {
   const [age, setAge] = useState('');
   const [weight, setWeight] = useState('');
   const [height, setHeight] = useState('');
+  const [proteinGoal, setProteinGoal] = useState('');
+  const [calorieGoal, setCalorieGoal] = useState('');
+  const [activityGoal, setActivityGoal] = useState('');
 
   const handleNameChange = (event) => {
     setName(event.target.value);
@@ -29,16 +32,28 @@ const RegistrationPage = () => {
     setHeight(event.target.value);
   };
 
+  const handleCalorieChange = (event) => {
+    setCalorieGoal(event.target.value);
+  };
+
+  const handleProteinChange = (event) => {
+    setProteinGoal(event.target.value);
+  };
+
+  const handleActivityChange = (event) => {
+    setActivityGoal(event.target.value);
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      console.log('Submitting:', { name, age, weight, height });
+      console.log('Submitting:', { name, age, weight, height, calorieGoal, proteinGoal, activityGoal });
       const response = await fetch('http://localhost:4000/register', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ name, age, weight, height }),
+        body: JSON.stringify({ name, age, weight, height, calorieGoal, proteinGoal, activityGoal }),
       });
 
       const data = await response.json();
@@ -127,6 +142,42 @@ const RegistrationPage = () => {
                   type="number"
                   value={height}
                   onChange={handleHeightChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="caloriegoal"
+                  label="per day calorie goal (cal)"
+                  name="caloriegoal"
+                  type="number"
+                  value={calorieGoal}
+                  onChange={handleCalorieChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="proteingoal"
+                  label="per day protein goal (g)"
+                  name="proteingoal"
+                  type="number"
+                  value={proteinGoal}
+                  onChange={handleProteinChange}
+                />
+              </Grid>
+              <Grid item xs={12}>
+                <TextField
+                  required
+                  fullWidth
+                  id="activitygoal"
+                  label="per day activity goal (cal)"
+                  name="activitygoal"
+                  type="number"
+                  value={activityGoal}
+                  onChange={handleActivityChange}
                 />
               </Grid>
             </Grid>

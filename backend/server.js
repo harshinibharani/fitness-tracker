@@ -55,9 +55,9 @@ app.post('/login', async (req, res) => {
 });
 // Register route
 app.post('/register', async (req, res) => {
-  const { name, age, weight, height } = req.body;
-  if (!name || !age || !weight || !height) {
-    return res.status(400).json({ message: 'Name, age, weight, and height are required' });
+  const { name, age, weight, height, calorieGoal, proteinGoal, activityGoal } = req.body;
+  if (!name || !age || !weight || !height || !calorieGoal || !proteinGoal || !activityGoal) {
+    return res.status(400).json({ message: 'All details are required' });
   }
 
   if (isNaN(age) || isNaN(weight) || isNaN(height)) {
@@ -73,7 +73,15 @@ app.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    const newUser = { name, age: parseInt(age), weight: parseInt(weight), height: parseInt(height) };
+    const newUser = { 
+      name, 
+      age: parseInt(age), 
+      weight: parseInt(weight), 
+      height: parseInt(height) ,
+      calorieGoal: parseInt(calorieGoal),
+      proteinGoal: parseInt(proteinGoal),
+      activityGoal: parseInt(activityGoal)
+    };
     const result = await usersCollection.insertOne(newUser);
 
     return res.json({ message: 'User registered successfully', newUser });
@@ -86,7 +94,7 @@ app.post('/register', async (req, res) => {
 
 // Add workout route
 app.post('/workouts/add', async (req, res) => {
-  const { userId, activityType, caloriesBurned, date } = req.body;
+  const { userId, activityType, caloriesBurned, date} = req.body;
   if (!userId || !activityType || !caloriesBurned || !date) {
     return res.status(400).json({ message: 'All fields are required' });
   }
@@ -99,7 +107,7 @@ app.post('/workouts/add', async (req, res) => {
       userId: new ObjectId(userId), // Convert userId to ObjectId
       activityType,
       caloriesBurned: parseInt(caloriesBurned),
-      date: new Date(date),
+      date,
     };
 
     const result = await workoutsCollection.insertOne(newWorkout);

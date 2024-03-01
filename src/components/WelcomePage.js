@@ -36,7 +36,7 @@ function WelcomePage() {
   
           const data = await response.json();
           if (response.ok && data.user) {
-            console.log(data.user);
+            // console.log(data.user);
             setName(inputName);
             setUserData(data.user); // Set user data
             setLoggedIn(true);

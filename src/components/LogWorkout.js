@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import {
-  Container,
+  Grid,
   Typography,
   Box,
   TextField,
@@ -10,7 +10,10 @@ import {
   Select,
   FormControl,
   InputLabel,
+  AppBar,
+  Toolbar
 } from '@mui/material';
+import EditNoteOutlinedIcon from '@mui/icons-material/EditNoteOutlined';
 
 const LogWorkout = () => {
   const [activityType, setActivityType] = useState('');
@@ -19,7 +22,7 @@ const LogWorkout = () => {
 
   const location = useLocation();
   const userData = location.state?.userData;
-  console.log('In logworkout',userData);
+  // console.log('In logworkout',userData);
 
   const handleActivityTypeChange = (event) => {
     setActivityType(event.target.value);
@@ -36,7 +39,7 @@ const LogWorkout = () => {
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      console.log(userData?._id,'ID');
+      // console.log(userData?._id,'ID');
       const response = await fetch('http://localhost:4000/workouts/add', {
         method: 'POST',
         headers: {
@@ -64,11 +67,17 @@ const LogWorkout = () => {
 
   return (
     <div>
-      <Container maxWidth="sm">
-        <Box sx={{ my: 4 }}>
-          <Typography variant="h4" gutterBottom>
-            Log Your Workout
+      
+        <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static" sx={{ marginBottom: 4 }}>
+        <Toolbar>
+          <EditNoteOutlinedIcon sx={{ marginRight: 1 }} />
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Log Workout
           </Typography>
+        </Toolbar>
+      </AppBar>
+      <Grid container justifyContent="center">
           <form onSubmit={handleSubmit}>
            <FormControl fullWidth sx={{ my: 2 }}>
             <InputLabel id="activity-type-label">Activity Type</InputLabel>
@@ -130,8 +139,8 @@ const LogWorkout = () => {
               Log Workout
             </Button>
           </form>
+          </Grid>
         </Box>
-      </Container>
     </div>
   );
 };

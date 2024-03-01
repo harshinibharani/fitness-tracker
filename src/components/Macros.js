@@ -7,9 +7,14 @@ import { Typography,
     Paper,
     Avatar,
     CssBaseline,
+    Box,
+    AppBar,
+    Toolbar,
+
 } from '@mui/material';
 import { getNutritionData } from './API.js'; // Importing the API function
 import RestaurantOutlinedIcon from '@mui/icons-material/RestaurantOutlined';
+import MenuBookOutlinedIcon from '@mui/icons-material/MenuBookOutlined';
 
 const Macros = () => {
     const [foodName, setFoodName] = useState('');
@@ -17,11 +22,11 @@ const Macros = () => {
 
     const location = useLocation();
     const userData = location.state?.userData;
-    console.log('In Macros', userData);
+    // console.log('In Macros', userData);
 
     const handleSave = async (e) => {
         e.preventDefault();
-        console.log('nd inside save', nutritionData);
+        // console.log('nd inside save', nutritionData);
         // insert to Macros Collection
         const response = await fetch('http://localhost:4000/macros/add', {
             method: 'POST',
@@ -62,6 +67,15 @@ const Macros = () => {
     };
 
     return (
+        <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static" sx={{ marginBottom: 4 }}>
+        <Toolbar>
+          <MenuBookOutlinedIcon sx={{ marginRight: 1 }} />
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+            Log and Browse Macros
+          </Typography>
+        </Toolbar>
+      </AppBar>
         <Container component="main" maxWidth="xs">
           <CssBaseline />
           <Paper
@@ -138,6 +152,7 @@ const Macros = () => {
             )}
           </Paper>
         </Container>
+        </Box>
       );
 };
 
